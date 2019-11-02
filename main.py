@@ -29,18 +29,18 @@ impossible_case = [[1, 2, 3],
                    [8, 7, 0]]
 
 
-def algorithmChooser(puzzle):
+def algorithm_chooser(puzzle):
 
-    chooseAlgorithm = input("Enter your choice of algorithm:" '\n'
+    choose_algorithm = input("Enter your choice of algorithm:" '\n'
                             "1. Uniform Cost Search" '\n'
                             "2. A* with Misplaced Tile heuristic" '\n'
                             "3. A* with the Manhattan distance heuristic" '\n')
-    if chooseAlgorithm == "1":
+    if choose_algorithm == "1":
         heuristic = 0
-    if chooseAlgorithm == "2":
+    if choose_algorithm == "2":
         heuristic = misplaced_tile(puzzle)
         print("Misplaced tiles: " + str(heuristic) + '\n')
-    if chooseAlgorithm == "3":
+    if choose_algorithm == "3":
         heuristic = manhattan_distance(puzzle)
         print("Manhattan distance is: " + str(heuristic) + '\n')
 
@@ -54,16 +54,17 @@ def misplaced_tile(puzzle):
                 h += 1
     return h
 
-
+#Compare position of puzzle_num to goal_num and calculate distance
+#Sum is manhattan_distance
 def manhattan_distance(puzzle):
     h = 0
     for i in range(3):
         for j in range(3):
-            puzzleNum = puzzle[i][j]
-            goalNum = goal_state[i][j]
+            puzzle_num = puzzle[i][j]
+            goal_num = goal_state[i][j]
 
-            x = abs((puzzleNum / 3) - (goalNum / 3))
-            y = abs((puzzleNum % 3) - (goalNum % 3))
+            x = abs((puzzle_num / 3) - (goal_num / 3))
+            y = abs((puzzle_num % 3) - (goal_num % 3))
 
             h += (x + y)
     return int(h)
@@ -71,68 +72,68 @@ def manhattan_distance(puzzle):
 
 def main():
 
-    choosePuzzle = input(
+    choose_puzzle = input(
         "Welcome to Parth Mangrola's 8-puzzle solver. Type 1 to use a default puzzle, or 2 to enter your own puzzle." '\n')
 
-    if choosePuzzle == "1":  # default puzzle
-        chooseDefault = input("Choose one of the following:" '\n'
+    if choose_puzzle == "1":  # default puzzle
+        choose_default = input("Choose one of the following:" '\n'
                               "1. Trivial Puzzle" '\n'
                               "2. Easy Puzzle" '\n'
                               "3. Oh Boy Puzzle" '\n'
                               "4. Very Easy Puzzle" '\n'
                               "5. Doable Puzzle" '\n'
                               "6. Impossible Puzzle" '\n')
-        if chooseDefault == "1":
+        if choose_default == "1":
             print("Trivial selected" '\n')
             print(trivial_case)
-            algorithmChooser(trivial_case)
+            algorithm_chooser(trivial_case)
 
-        if chooseDefault == "2":
+        if choose_default == "2":
             print("Easy selected" '\n')
             print(easy_case)
             print('\n')
-            algorithmChooser(easy_case)
+            algorithm_chooser(easy_case)
 
-        if chooseDefault == "3":
+        if choose_default == "3":
             print("Oh Boy selected" '\n')
             print(ohBoy_case)
-            algorithmChooser(ohBoy_case)
+            algorithm_chooser(ohBoy_case)
 
-        if chooseDefault == "4":
+        if choose_default == "4":
             print("Very Easy selected" '\n')
             print(veryEasy_case)
-            algorithmChooser(veryEasy_case)
+            algorithm_chooser(veryEasy_case)
 
-        if chooseDefault == "5":
+        if choose_default == "5":
             print("Doable selected" '\n')
             print(doable_case)
-            algorithmChooser(doable_case)
+            algorithm_chooser(doable_case)
 
-        if chooseDefault == "6":
+        if choose_default == "6":
             print("Impossible selected" '\n')
             print(impossible_case)
-            algorithmChooser(impossible_case)
+            algorithm_chooser(impossible_case)
 
-    if choosePuzzle == "2":  # custom puzzle
+    if choose_puzzle == "2":  # custom puzzle
 
         print("Enter your puzzle, use a zero to represent the blank." '\n')
 
-        rowOne = input("Enter the first row, use space between numbers." '\n')
+        row_one = input("Enter the first row, use space between numbers." '\n')
 
-        rowTwo = input("Enter the second row, use space between numbers." '\n')
+        row_two = input("Enter the second row, use space between numbers." '\n')
 
-        rowThree = input(
+        row_three = input(
             "Enter the third row, use space between numbers." '\n')
 
-        rowOne = [int(i) for i in rowOne.split(" ")]
-        rowTwo = [int(i) for i in rowTwo.split(" ")]
-        rowThree = [int(i) for i in rowThree.split(" ")]
+        row_one = [int(i) for i in row_one.split(" ")]
+        row_two = [int(i) for i in row_two.split(" ")]
+        row_three = [int(i) for i in row_three.split(" ")]
 
-        customPuzzle = [rowOne, rowTwo, rowThree]
+        custom_puzzle = [row_one, row_two, row_three]
 
-        print(customPuzzle)
+        print(custom_puzzle)
 
-        algorithmChooser(customPuzzle)
+        algorithm_chooser(custom_puzzle)
 
 
 main()
