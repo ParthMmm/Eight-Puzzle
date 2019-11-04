@@ -32,13 +32,16 @@ impossible_case = [[1, 2, 3],
 
 class Node:
     def __init__(self, puzzle, heuristic, depth):
+        self.puzzle = puzzle
         self.h = heuristic
         self.g = depth
         self.f = heuristic + depth
-        self.puzzle = puzzle
 
-    def __cmp__(self, other):
-        return cmp(self.cost, other.cost)
+    def __lt__(self, other):
+        return self.f < other.f
+
+    def get_puzzle(self):
+        return self.puzzle
 
 
 def algorithm_chooser(puzzle):
@@ -103,11 +106,13 @@ def search(puzzle, h):
 
     start_node = Node(puzzle, heuristic, 0)
     heappush(open_list, start_node)
+    print(open_list[0].puzzle)
 
     while(open_list):
 
         heapify(open_list)
         tmp = heappop(open_list)
+
         #print("Best state to expand g(n) = " + str(tmp.g) + " h(n) = " + str(tmp.h) + '\n')
         if(is_solved(tmp.puzzle)):  # check if goal else expand
             solved = 1
@@ -115,27 +120,37 @@ def search(puzzle, h):
 
         print("Expanding state")
         total_nodes_expanded += 1
-
         new_list, total_nodes_expanded = move_tiles(tmp, total_nodes_expanded)
+        print(new_list[0].puzzle)
 
         # update nodes
-
+        print("111111")
+        print(len(new_list))
         for i in range(len(new_list)):
             if h == 1:
-                new_list[i] = 0
+                print("ccccc")
+                new_list[i].h = 0
             if h == 2:
+                print("aaaa")
                 new_list[i].h = misplaced_tile(new_list[i].puzzle)
                 new_list[i].f = new_list[i].g + new_list[i].h
+                print("bbbb")
             if h == 3:
                 new_list[i].h = manhattan_distance(new_list[i].puzzle)
                 new_list[i].f = new_list[i].g + new_list[i].h
+            print("2222")
+            print(new_list[i].puzzle)
             heappush(open_list, new_list[i])
+            #print("Best state to expand g(n) = " + str(new_list[i].g) + " h(n) = " + str(new_list[i].h) + '\n')
+            print("3333")
+
     if(solved):
         print("Solved!" + '\n')
         print_puzzle(tmp.puzzle)
 
         print('Nodes expanded: ' + str(total_nodes_expanded) + '\n')
         print('Depth goal: ' + str(tmp.g) + '\n')
+
 
 def is_solved(puzzle):
     if(puzzle == goal_state):
@@ -144,24 +159,30 @@ def is_solved(puzzle):
         return 0
 
 # pass is current node and total_nodes_expanded to update
+
+
 def move_tiles(n, total_nodes_expanded):
     # find 0 so we know where we can move
 
     for i in range(3):
         for j in range(3):
-            x = i
-            y = j
-
+            if n.puzzle[i][j] == 0:
+                x = i
+                y = j
+    print("x: " + str(x))
+    print("y: " + str(y))
+    print("before move")
     temp_list = []
-    if x - 1 >= 0:  # down
+    if x > 0:  # down
         copy_list = deepcopy(n.puzzle)
         copy_list[x][y] = copy_list[x - 1][y]
         copy_list[x - 1][y] = 0
         new_node = Node(copy_list, 0, n.g + 1)
         temp_list.append(new_node)
         total_nodes_expanded += 1
+    print("after down move")
 
-    if x + 1 < 3:  # up
+    if x < 2:  # up
         copy_list = deepcopy(n.puzzle)
         copy_list[x][y] = copy_list[x + 1][y]
         copy_list[x + 1][y] = 0
@@ -169,7 +190,7 @@ def move_tiles(n, total_nodes_expanded):
         temp_list.append(new_node)
         total_nodes_expanded += 1
 
-    if y - 1 >= 0:  # left
+    if y > 0:  # left
 
         copy_list = deepcopy(n.puzzle)
         copy_list[x][y] = copy_list[x][y - 1]
@@ -179,12 +200,11 @@ def move_tiles(n, total_nodes_expanded):
         temp_list.append(new_node)
         total_nodes_expanded += 1
 
-    if y + 1 < 3:  # right
+    if y < 2:  # right
         copy_list = deepcopy(n.puzzle)
         copy_list[x][y] = copy_list[x][y + 1]
         copy_list[x][y + 1] = 0
-
-        new_node = Node(copy_list, 0, n.depth + 1)
+        new_node = Node(copy_list, 0, n.g + 1)
         temp_list.append(new_node)
         total_nodes_expanded += 1
 
