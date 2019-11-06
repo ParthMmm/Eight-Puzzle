@@ -40,6 +40,7 @@ class Node:
     def __lt__(self, other):
         return self.f < other.f
 
+
 def algorithm_chooser(puzzle):
 
     choose_algorithm = input("Enter your choice of algorithm:" '\n'
@@ -62,18 +63,23 @@ def misplaced_tile(puzzle):
     h = 0
     for i in range(3):
         for j in range(3):
-            if puzzle[i][j] != goal_state[i][j]:
-                h += 1
+            if puzzle[i][j] != 0:
+                if puzzle[i][j] != goal_state[i][j]:
+                    h += 1
     return h
 
-# Compare position of puzzle_num to goal_num and calculate distance
-# Sum is manhattan_distance
+
 def manhattan_distance(puzzle):
     h = 0
     for i in range(3):
         for j in range(3):
-            h += (abs((puzzle[i][j] // 3) - (goal_state[i][j] // 3)
-                      ) + abs((puzzle[i][j] % 3) - (goal_state[i][j] % 3)))
+            if puzzle[i][j] != 0:
+
+                x = ((puzzle[i][j] - 1) // 3)
+                y = ((puzzle[i][j] - 1) % 3)
+
+                h += abs(x - i) + abs(y - j)
+
     return int(h)
 
 
@@ -102,9 +108,9 @@ def search(puzzle, h):
 
     while(open_list):
 
-
         heapify(open_list)
 
+        # only update if open_list is larger
         if max_nodes_queue < len(open_list):
             max_nodes_queue = len(open_list)
 
@@ -118,7 +124,6 @@ def search(puzzle, h):
         if(is_solved(tmp.puzzle)):  # check if goal else expand
             solved = 1
             break
-
 
         new_list, total_nodes_expanded = move_tiles(tmp, total_nodes_expanded)
 
@@ -152,6 +157,8 @@ def is_solved(puzzle):
         return 0
 
 # pass in current node and total_nodes_expanded to update
+
+
 def move_tiles(n, total_nodes_expanded):
     # find 0 so we know where we can move
 
