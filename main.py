@@ -40,24 +40,6 @@ class Node:
     def __lt__(self, other):
         return self.f < other.f
 
-
-def algorithm_chooser(puzzle):
-
-    choose_algorithm = input("Enter your choice of algorithm:" '\n'
-                             "1. Uniform Cost Search" '\n'
-                             "2. A* with Misplaced Tile heuristic" '\n'
-                             "3. A* with the Manhattan distance heuristic" '\n')
-    if choose_algorithm == "1":
-        h = 1
-        search(puzzle, h)
-    if choose_algorithm == "2":
-        h = 2
-        search(puzzle, h)
-    if choose_algorithm == "3":
-        h = 3
-        search(puzzle, h)
-
-
 # Compare puzzle with goal and count the diff
 def misplaced_tile(puzzle):
     h = 0
@@ -74,7 +56,6 @@ def manhattan_distance(puzzle):
     for i in range(3):
         for j in range(3):
             if puzzle[i][j] != 0:
-
                 x = ((puzzle[i][j] - 1) // 3)
                 y = ((puzzle[i][j] - 1) % 3)
 
@@ -91,10 +72,12 @@ def print_puzzle(puzzle):
 
 def search(puzzle, h):
     open_list = []
+    close_list = []
     total_nodes_expanded = 0
     max_nodes_queue = 0
     depth_goal = 0
     solved = 0
+    nop = 0
 
     if h == 1:
         heuristic = 0
@@ -114,7 +97,8 @@ def search(puzzle, h):
         if max_nodes_queue < len(open_list):
             max_nodes_queue = len(open_list)
 
-        tmp = heappop(open_list)
+        tmp = heappop(open_list)  # remove from open
+        heappush(close_list, tmp)  # add to closed
 
         print("Best state to expand g(n) = " +
               str(tmp.g) + " h(n) = " + str(tmp.h) + '\n')
@@ -128,16 +112,25 @@ def search(puzzle, h):
         new_list, total_nodes_expanded = move_tiles(tmp, total_nodes_expanded)
 
         # update nodes
-        for i in range(len(new_list)):
-            if h == 1:
-                new_list[i].h = 0
-            if h == 2:
-                new_list[i].h = misplaced_tile(new_list[i].puzzle)
-                new_list[i].f = new_list[i].g + new_list[i].h
-            if h == 3:
-                new_list[i].h = manhattan_distance(new_list[i].puzzle)
-                new_list[i].f = new_list[i].g + new_list[i].h
-            heappush(open_list, new_list[i])
+        for new_node in new_list:
+            # check if node has already been visited (not working correctly)
+            for closed_node in close_list:
+                if new_node.puzzle == closed_node.puzzle:
+                    nop = 1
+                else:
+                    nop = 0
+            if nop == 0:
+                if h == 1:
+                    new_node.h = 0
+                    new_node.f = new_node.g
+                if h == 2:
+                    new_node.h = misplaced_tile(new_node.puzzle)
+                    new_node.f = new_node.g + new_node.h
+                if h == 3:
+                    new_node.h = manhattan_distance(new_node.puzzle)
+                    new_node.f = new_node.g + new_node.h
+
+                heappush(open_list, new_node)
 
     if(solved):
         print("Solved!" + '\n')
@@ -173,7 +166,7 @@ def move_tiles(n, total_nodes_expanded):
         copy_list = deepcopy(n.puzzle)
         copy_list[x][y] = copy_list[x - 1][y]
         copy_list[x - 1][y] = 0
-        new_node = Node(copy_list, 0, n.g + 1)
+        new_node = Node(copy_list, 0, n.g + 1)  # update depth
         temp_list.append(new_node)
         total_nodes_expanded += 1
 
@@ -205,6 +198,21 @@ def move_tiles(n, total_nodes_expanded):
 
     return temp_list, total_nodes_expanded
 
+def algorithm_chooser(puzzle):
+
+    choose_algorithm = input("Enter your choice of algorithm:" '\n'
+                             "1. Uniform Cost Search" '\n'
+                             "2. A* with Misplaced Tile heuristic" '\n'
+                             "3. A* with the Manhattan distance heuristic" '\n')
+    if choose_algorithm == "1":
+        h = 1
+        search(puzzle, h)
+    if choose_algorithm == "2":
+        h = 2
+        search(puzzle, h)
+    if choose_algorithm == "3":
+        h = 3
+        search(puzzle, h)
 
 def main():
 
